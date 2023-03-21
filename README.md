@@ -1,5 +1,5 @@
 Patricks code is for Aave V2, mine is for the new Aave V3
-
+I'm having trouble with the V3 tho, waiting for help: ["Lesson 13: aave-v3 .supply( funciton deposits just a fraction of amount #5134"](https://github.com/smartcontractkit/full-blockchain-solidity-course-js/discussions/5134)
 
 1. Deposit collateral: ETH / WETH (wrapped ETH)
 2. Borrow another asset: DAI

@@ -16,7 +16,6 @@ async function main() {
     await pool.supply(wethTokenAddress, AMOUNT, deployer, 0)
     console.log("Deposited")
     let { totalDebtBase, availableBorrowsBase } = await getBorrowUserData(pool, deployer)
-
     const daiPrice = await getDaiPrice()
     const amountDaiToBorrow = Number((availableBorrowsBase * 0.95 * (1 / daiPrice)).toFixed(18)) // I think the 0.95 are a safety thing bc if we would borrow 100% then we would be able to get liquidated...
     console.log(`you can borrow ${amountDaiToBorrow} DAI`) // As we can see in patricks code there would be a problem if his number would have more than 18 decimals when used in this calculation. How do I make sure that stuff like this gets tested in real world projects?
@@ -25,6 +24,17 @@ async function main() {
     const daiTokenAddress = "0x413AdaC9E2Ef8683ADf5DDAEce8f19613d60D1bb"
     await borrowDai(daiTokenAddress, pool, amountDaiToBorrowWei, deployer)
     await getBorrowUserData(pool, deployer)
+    await repay(amountDaiToBorrowWei, daiTokenAddress, pool, deployer)
+    await getBorrowUserData(pool, deployer)
+
+    // since there is intrest on the DAI borrowed, I will still be in dept for that amount. I would need to get some DAI through a DEX to repay that amount to be totally in the clear.
+}
+
+async function repay(amount, tokenAddress, pool, account) {
+    await approveErc20(tokenAddress, pool.adderess, amount, account)
+    const repayTx = await pool.address(amount, account)
+    await repayTx.wait(1)
+    console.log(`Successfully repaid ${amount}`)
 }
 
 async function borrowDai(tokenAddress, pool, amountDaiToBorrowWei, account) {
